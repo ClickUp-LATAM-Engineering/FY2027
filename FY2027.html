@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKO Product Intelligence</title>
+
+<!-- ClickUp Corporate Vibe Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter', Arial, sans-serif;background:#050505;color:#fff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale; height:100vh; width:100vw; overflow:hidden;}
+
+/* Language Switcher Logic */
+body.lang-en [lang]:not([lang="en"]) { display: none !important; }
+body.lang-es [lang]:not([lang="es"]) { display: none !important; }
+body.lang-pt [lang]:not([lang="pt"]) { display: none !important; }
+
+.app{display:grid;grid-template-columns:clamp(220px, 15vw, 280px) 1fr;grid-template-rows:clamp(56px, 6vh, 70px) 1fr;height:100vh;width:100vw;background:#050505;overflow:hidden;}
+
+/* UI Shell (Sidebar & Topbar) */
+.topbar{grid-column:1/-1;background:#0A0B0E;border-bottom:1px solid #1A1C23;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px, 2vw, 32px); z-index:10;}
+.logo{display:flex;align-items:center;gap:clamp(6px, 1vw, 10px)}
+
+.lang-toggle{display:flex;background:#050505;border-radius:8px;border:1px solid #1A1C23;padding:3px;gap:2px;margin-right:8px}
+.lang-btn{background:transparent;color:#888;border:none;padding:5px clamp(10px, 1vw, 16px);border-radius:6px;font-size:clamp(9px, 0.7vw, 11px);font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.2s ease}
+.lang-btn:hover{background:#1A1C23;color:#fff}
+.lang-btn.active{background:#FF00DF;color:#fff}
+
+.topbar-meta{display:flex;align-items:center;gap:clamp(8px, 1vw, 16px)}
+.pill{font-size:clamp(8px, 0.7vw, 11px);font-weight:700;padding:clamp(4px, 0.5vh, 6px) clamp(10px, 1vw, 14px);border-radius:99px;letter-spacing:0.05em; white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;}
+.pill-pink{background:#FF00DF;color:#fff}
+.pill-orange{border:1px solid #FF7A00;color:#FF7A00;background:transparent}
+.pill-purple{background:#7B68EE;color:#fff}
+.progress-wrap{display:flex;align-items:center;gap:8px;font-size:clamp(10px, 0.8vw, 12px);color:#888;font-weight:500;}
+.progress-bar{width:clamp(60px, 8vw, 120px);height:6px;background:#1A1C23;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg, #FF00DF, #7B68EE, #00C2FF);border-radius:99px;transition:width 0.3s}
+
+.sidebar{background:#0A0B0E;border-right:1px solid #1A1C23;overflow-y:auto;padding:16px 0; z-index:10;}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:#2A2D39;border-radius:99px}
+.nav-section-label{font-size:clamp(8px, 0.6vw, 10px);font-weight:700;letter-spacing:0.1em;color:#596073;padding:12px 20px 6px;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 20px;cursor:pointer;transition:all 0.2s ease;border-left:2px solid transparent}
+.nav-item:hover{background:#111217;transform:translateX(3px)}
+.nav-item.active{background:#161524;border-left-color:#7B68EE;transform:translateX(0)}
+.nav-item.dark-slide{border-left-color:#FF00DF}
+.nav-item.dark-slide.active{background:#220A1E;border-left-color:#FF00DF}
+.nav-num{font-size:clamp(9px, 0.7vw, 11px);font-weight:700;color:#596073;min-width:18px;font-family:'Plus Jakarta Sans',sans-serif;}
+.nav-item.active .nav-num{color:#7B68EE}
+.nav-item.dark-slide.active .nav-num{color:#FF00DF}
+.nav-label{font-size:clamp(10px, 0.8vw, 13px);font-weight:500;color:#8B93A6;line-height:1.3;font-family:'Inter',sans-serif;transition:color 0.2s}
+.nav-item:hover .nav-label{color:#E5E7EB}
+.nav-item.active .nav-label{color:#fff;font-weight:600;}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-dark{background:#FF00DF}
+.dot-light{background:#596073}
+.dot-active{background:#7B68EE}
+
+/* Presentation Canvas */
+.main{background:#000000;overflow:hidden;display:flex;flex-direction:column}
+.slide-area{flex:1;overflow:hidden;position:relative;background:#000000;}
+
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.slide{display:none;width:100%;height:100%;position:absolute;inset:0}
+.slide.visible{display:flex;flex-direction:column;justify-content:center;padding:clamp(32px, 6vh, 100px) clamp(40px, 10vw, 180px);animation:slideIn 0.35s ease-out forwards}
+.slide-dark-bg{background:#000000}
+.slide-light-bg{background:#FFFFFF}
+
+/* Premium Typography Styling */
+.eyebrow{font-size:clamp(10px, 0.9vw, 16px);font-weight:800;letter-spacing:0.15em;color:#FF00DF;margin-bottom:clamp(12px, 2vh, 24px);font-family:'Plus Jakarta Sans',sans-serif; text-transform:uppercase;}
+.eyebrow-orange{color:#FF7A00}
+.eyebrow-purple{color:#7B68EE}
+
+.text-gradient {
+  background: linear-gradient(90deg, #FF00DF 0%, #FF7A00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(90deg, #7B68EE 0%, #FF00DF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(36px, 5.5vw, 96px);font-weight:800;line-height:1.05;color:#fff;margin-bottom:clamp(4px, 1vh, 8px);letter-spacing:-0.03em}
+.content-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px, 4vw, 68px);font-weight:800;color:#1A1B20;line-height:1.05;margin-bottom:clamp(16px, 2.5vh, 32px);letter-spacing:-0.03em}
+
+.content-subtitle{font-size:clamp(14px, 1.3vw, 24px);font-family:'Inter',sans-serif;color:#8B93A6;margin-bottom:clamp(16px, 3vh, 32px);font-weight:500;}
+
+/* Layout limiters */
+.card-grid, .card-grid-3, .pillars, .agenda-grid, .tag-row { max-width: 1400px; }
+.action-row, .comp-row, .dark-quote, .closing-line, .slide-desc-text { max-width: 1100px; }
+
+/* Premium Clean Cards */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px, 2vw, 32px);margin-top:clamp(12px, 2vh, 24px)}
+.card-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(16px, 1.5vw, 28px);margin-top:clamp(12px, 2vh, 24px)}
+
+.content-card{background:#F9FAFB;padding:clamp(20px, 3vh, 40px) clamp(24px, 2.5vw, 40px);border-radius:16px;border:1px solid rgba(0,0,0,0.03);box-shadow:0 8px 24px rgba(0,0,0,0.02);transition:transform 0.2s ease;}
+.content-card:hover { transform: translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.04); }
+
+.card-title{font-size:clamp(14px, 1.3vw, 24px);font-weight:800;color:#1A1B20;margin-bottom:clamp(8px, 1.5vh, 16px);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-0.01em;}
+.card-title-pink{color:#FF00DF}
+.card-title-purple{color:#7B68EE}
+.card-title-orange{color:#FF7A00}
+
+.card-body{font-size:clamp(12px, 1.1vw, 18px);font-family:'Inter',sans-serif;color:#4B5563;line-height:1.6}
+
+.dark-quote{background:#0A0B0E;padding:clamp(20px, 3vh, 40px) clamp(24px, 3vw, 48px);border-radius:12px;font-size:clamp(14px, 1.3vw, 22px);font-style:italic;color:#fff;border-left:4px solid #FF00DF;font-family:'Inter',sans-serif;margin-top:clamp(16px, 2.5vh, 32px);line-height:1.6;font-weight:500;}
+
+.action-row{display:flex;align-items:center;gap:clamp(16px, 2vw, 28px);background:#F9FAFB;padding:clamp(16px, 2.5vh, 28px) clamp(20px, 2.5vw, 36px);margin-bottom:clamp(8px, 1.5vh, 16px);border-radius:12px;border:1px solid rgba(0,0,0,0.03);box-shadow:0 4px 16px rgba(0,0,0,0.02)}
+.action-num{font-size:clamp(20px, 2vw, 36px);font-weight:800;color:#7B68EE;min-width:clamp(32px, 3vw, 48px);font-family:'Plus Jakarta Sans',sans-serif; letter-spacing:-0.05em;}
+.action-text{font-size:clamp(12px, 1.1vw, 18px);font-family:'Inter',sans-serif;color:#4B5563;line-height:1.5}
+.action-text b{color:#1A1B20;font-weight:700;font-size:clamp(14px, 1.2vw, 20px);display:block;margin-bottom:4px;}
+
+.comp-row{display:flex;align-items:center;gap:clamp(12px, 1.5vw, 20px);padding:clamp(12px, 2vh, 20px) clamp(16px, 2vw, 24px);font-size:clamp(12px, 1.1vw, 18px);font-family:'Inter',sans-serif}
+.comp-row:nth-child(even){background:#F9FAFB;border-radius:8px}
+.comp-name{font-weight:700;min-width:clamp(120px, 14vw, 240px);color:#1A1B20;font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(14px, 1.3vw, 22px);}
+.verdict{display:inline-block;padding:6px 14px;border-radius:99px;font-size:clamp(10px, 0.8vw, 14px);font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.02em;}
+.comp-desc{color:#4B5563;flex:1;line-height:1.5}
+
+.closing-line{font-size:clamp(18px, 1.8vw, 32px);font-family:'Inter',sans-serif;color:#8B93A6;margin-top:clamp(16px, 3vh, 32px);line-height:1.6;font-weight:500;}
+.closing-line span{color:#FF7A00;font-weight:700}
+
+.pillars{display:flex;gap:clamp(12px, 1.5vw, 24px);margin-top:clamp(16px, 3vh, 32px)}
+.pillar{flex:1;background:#7B68EE;padding:clamp(12px, 2vh, 24px) clamp(16px, 2vw, 24px);border-radius:12px;font-size:clamp(12px, 1vw, 18px);font-weight:700;text-align:center;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 8px 20px rgba(123,104,238,0.2)}
+.pillar-pink{background:#FF00DF;box-shadow:0 8px 20px rgba(255,0,223,0.2)}
+.pillar-orange{background:#FF7A00;box-shadow:0 8px 20px rgba(255,122,0,0.2)}
+
+/* Anchored positioning for Logo */
+.slide-logo-wrapper {
+  position:absolute;
+  bottom:clamp(24px, 7vh, 48px);
+  left:clamp(40px, 10vw, 180px);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.bottom-nav{display:flex;align-items:center;justify-content:space-between;padding:clamp(12px, 2vh, 20px) clamp(16px, 2vw, 32px);background:#0A0B0E;border-top:1px solid #1A1C23;flex-shrink:0;z-index:10;}
+.nav-btn{font-size:clamp(11px, 0.9vw, 15px);font-weight:600;font-family:'Inter',sans-serif;padding:clamp(8px, 1vh, 12px) clamp(16px, 1.5vw, 28px);border-radius:8px;cursor:pointer;border:1px solid #2A2D39;background:transparent;color:#8B93A6;transition:all 0.2s}
+.nav-btn:hover{background:#1A1C23;color:#fff}
+.nav-btn-primary{background:#FF00DF;border-color:#FF00DF;color:#fff;box-shadow:0 4px 12px rgba(255,0,223,0.2)}
+.nav-btn-primary:hover{background:#D100B8;box-shadow:0 4px 16px rgba(255,0,223,0.3)}
+.slide-counter{font-size:clamp(11px, 0.9vw, 15px);color:#596073;font-family:'Inter',sans-serif;font-weight:600;}
+.dots{display:flex;gap:clamp(6px, 0.5vw, 10px);align-items:center}
+.nav-dot-sm{width:clamp(6px, 0.6vw, 10px);height:clamp(6px, 0.6vw, 10px);border-radius:50%;background:#2A2D39;cursor:pointer;transition:all 0.2s}
+.nav-dot-sm:hover{background:#596073}
+.nav-dot-sm.on{background:linear-gradient(90deg, #FF00DF, #7B68EE);width:clamp(16px, 2vw, 32px);border-radius:99px}
+
+.agenda-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px, 1.5vw, 24px);margin-top:clamp(16px, 3vh, 32px)}
+.agenda-item{display:flex;align-items:center;gap:clamp(12px, 1.5vw, 24px);background:#0A0B0E;padding:clamp(16px, 2.5vh, 28px) clamp(20px, 2vw, 32px);border-radius:12px;border-left:4px solid #1A1C23;cursor:pointer;transition:all 0.2s ease}
+.agenda-item:hover{border-left-color:#FF00DF;background:#111217;transform:translateX(4px)}
+.agenda-n{font-size:clamp(14px, 1.2vw, 24px);font-weight:800;color:#FF00DF;min-width:clamp(28px, 2.5vw, 44px);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-0.05em;}
+.agenda-t{font-size:clamp(12px, 1.1vw, 18px);font-family:'Inter',sans-serif;color:#E5E7EB;flex:1;font-weight:600;}
+.agenda-d{font-size:clamp(10px, 0.9vw, 15px);color:#596073;font-family:'Inter',sans-serif;font-weight:600;}
+
+.tag-row{display:flex;gap:clamp(10px, 1.2vw, 20px);margin-bottom:clamp(16px, 3vh, 32px);flex-wrap:wrap}
+
+/* ClickUp SVG Logo Styles */
+.cu-logo-svg { width: clamp(20px, 2.5vh, 32px); height: auto; }
+.cu-logo-text { font-family:'Plus Jakarta Sans', sans-serif; font-size:clamp(16px, 1.5vw, 24px); font-weight:800; color:#fff; letter-spacing:-0.03em; margin-left:6px; }
+.cu-logo-cover { width: clamp(32px, 4vh, 48px); height: auto; }
+.cu-logo-cover-text { font-family:'Plus Jakarta Sans', sans-serif; font-size:clamp(24px, 3vw, 36px); font-weight:800; color:#fff; letter-spacing:-0.03em; margin-left:8px; }
+</style>
+</head>
+<body class="lang-en">
+
+<div class="app">
+
+  <div class="topbar">
+    <div class="logo">
+      <!-- ClickUp Brand Logo (SVG) -->
+      <svg class="cu-logo-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 10L6 33L15 41L32 25L49 41L58 33L32 10Z" fill="url(#cu-grad)"/>
+        <defs>
+          <linearGradient id="cu-grad" x1="6" y1="10" x2="58" y2="41" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF00DF"/>
+            <stop offset="0.5" stop-color="#7B68EE"/>
+            <stop offset="1" stop-color="#00C2FF"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="cu-logo-text">ClickUp</span>
+      
+      <span style="font-size:clamp(9px, 0.8vw, 13px);color:#596073;font-family:'Inter',sans-serif;font-weight:500;margin-left:12px">
+        <span lang="en">SKO Product Intelligence</span>
+        <span lang="es">Inteligencia de Producto SKO</span>
+        <span lang="pt">Inteligência de Produto SKO</span>
+      </span>
+    </div>
+    <div class="topbar-meta">
+      <div class="lang-toggle">
+        <button onclick="setLang('en')" class="lang-btn active" id="btn-en">EN</button>
+        <button onclick="setLang('es')" class="lang-btn" id="btn-es">ES</button>
+        <button onclick="setLang('pt')" class="lang-btn" id="btn-pt">PT</button>
+      </div>
+      <span class="pill pill-pink">
+        <span lang="en">LATAM PARTNERS</span>
+        <span lang="es">SOCIOS LATAM</span>
+        <span lang="pt">PARCEIROS LATAM</span>
+      </span>
+      <span class="pill pill-orange">~60 MIN</span>
+      <span class="pill pill-purple">
+        <span lang="en">8 SECTIONS</span>
+        <span lang="es">8 SECCIONES</span>
+        <span lang="pt">8 SEÇÕES</span>
+      </span>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="prog" style="width:6%"></div></div>
+        <span id="prog-text">1/17</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="nav-section-label">
+      <span lang="en">Navigation</span>
+      <span lang="es">Navegación</span>
+      <span lang="pt">Navegação</span>
+    </div>
+
+    <div class="nav-item dark-slide active" data-slide="0" onclick="goTo(0)">
+      <span class="nav-num">01</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">Cover</span>
+        <span lang="es">Portada</span>
+        <span lang="pt">Capa</span>
+      </span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="1" onclick="goTo(1)">
+      <span class="nav-num">02</span><div class="nav-dot dot-light"></div>
+      <span class="nav-label">
+        <span lang="en">Agenda</span>
+        <span lang="es">Agenda</span>
+        <span lang="pt">Agenda</span>
+      </span>
+    </div>
+
+    <div class="nav-section-label" style="margin-top:8px">
+      <span lang="en">Opening</span>
+      <span lang="es">Apertura</span>
+      <span lang="pt">Abertura</span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="2" onclick="goTo(2)">
+      <span class="nav-num">03</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">Set the stakes</span>
+        <span lang="es">Definir el contexto</span>
+        <span lang="pt">Definir o contexto</span>
+      </span>
+    </div>
+    <div class="nav-item" data-slide="3" onclick="goTo(3)">
+      <span class="nav-num">04</span><div class="nav-dot dot-light"></div>
+      <span class="nav-label">
+        <span lang="en">Opening talking pts</span>
+        <span lang="es">Puntos de apertura</span>
+        <span lang="pt">Pontos de abertura</span>
+      </span>
+    </div>
+
+    <div class="nav-section-label" style="margin-top:8px">
+      <span lang="en">Strategic shift</span>
+      <span lang="es">Cambio estratégico</span>
+      <span lang="pt">Mudança estratégica</span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="4" onclick="goTo(4)">
+      <span class="nav-num">05</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">AI platform, not PM</span>
+        <span lang="es">Plataforma IA, no PM</span>
+        <span lang="pt">Plataforma IA, não PM</span>
+      </span>
+    </div>
+    <div class="nav-item" data-slide="5" onclick="goTo(5)">
+      <span class="nav-num">06</span><div class="nav-dot dot-light"></div>
+      <span class="nav-label">
+        <span lang="en">4 things to know</span>
+        <span lang="es">4 cosas que saber</span>
+        <span lang="pt">4 coisas a saber</span>
+      </span>
+    </div>
+
+    <div class="nav-section-label" style="margin-top:8px">
+      <span lang="en">Product drops</span>
+      <span lang="es">Lanzamientos</span>
+      <span lang="pt">Lançamentos</span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="6" onclick="goTo(6)">
+      <span class="nav-num">07</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">MCP + agents</span>
+        <span lang="es">MCP + agentes</span>
+        <span lang="pt">MCP + agentes</span>
+      </span>
+    </div>
+    <div class="nav-item" data-slide="7" onclick="goTo(7)">
+      <span class="nav-num">08</span><div class="nav-dot dot-light"></div>
+      <span class="nav-label">
+        <span lang="en">MCP content</span>
+        <span lang="es">Contenido MCP</span>
+        <span lang="pt">Conteúdo MCP</span>
+      </span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="8" onclick="goTo(8)">
+      <span class="nav-num">09</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">VibeUp</span>
+        <span lang="es">VibeUp</span>
+        <span lang="pt">VibeUp</span>
+      </span>
+    </div>
+    <div class="nav-item" data-slide="9" onclick="goTo(9)">
+      <span class="nav-num">10</span><div class="nav-dot dot-light"></div>
+      <span class="nav-label">
+        <span lang="en">VibeUp content</span>
+        <span lang="es">Contenido VibeUp</span>
+        <span lang="pt">Conteúdo VibeUp</span>
+      </span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="10" onclick="goTo(10)">
+      <span class="nav-num">11</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">@clickup.com</span>
+        <span lang="es">@clickup.com</span>
+        <span lang="pt">@clickup.com</span>
+      </span>
+    </div>
+    <div class="nav-item" data-slide="11" onclick="goTo(11)">
+      <span class="nav-num">12</span><div class="nav-dot dot-light"></div>
+      <span class="nav-label">
+        <span lang="en">Email content</span>
+        <span lang="es">Contenido Email</span>
+        <span lang="pt">Conteúdo Email</span>
+      </span>
+    </div>
+
+    <div class="nav-section-label" style="margin-top:8px">
+      <span lang="en">Action + Compete</span>
+      <span lang="es">Acción + Competencia</span>
+      <span lang="pt">Ação + Concorrência</span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="12" onclick="goTo(12)">
+      <span class="nav-num">13</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">How you sell</span>
+        <span lang="es">Cómo vendes</span>
+        <span lang="pt">Como vender</span>
+      </span>
+    </div>
+    <div class="nav-item" data-slide="13" onclick="goTo(13)">
+      <span class="nav-num">14</span><div class="nav-dot dot-light"></div>
+      <span class="nav-label">
+        <span lang="en">4 behavior changes</span>
+        <span lang="es">4 cambios</span>
+        <span lang="pt">4 mudanças</span>
+      </span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="14" onclick="goTo(14)">
+      <span class="nav-num">15</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">vs Competition</span>
+        <span lang="es">vs Competencia</span>
+        <span lang="pt">vs Concorrência</span>
+      </span>
+    </div>
+    <div class="nav-item" data-slide="15" onclick="goTo(15)">
+      <span class="nav-num">16</span><div class="nav-dot dot-light"></div>
+      <span class="nav-label">AI Work OS</span>
+    </div>
+    <div class="nav-item dark-slide" data-slide="16" onclick="goTo(16)">
+      <span class="nav-num">17</span><div class="nav-dot dot-dark"></div>
+      <span class="nav-label">
+        <span lang="en">Closing</span>
+        <span lang="es">Cierre</span>
+        <span lang="pt">Encerramento</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="slide-area" id="slideArea">
+
+      <!-- SLIDE 0 -->
+      <div class="slide visible slide-dark-bg" id="s0">
+        <div class="eyebrow">
+          <span lang="en">LATAM PARTNER CALL</span>
+          <span lang="es">LLAMADA SOCIOS LATAM</span>
+          <span lang="pt">CHAMADA PARCEIROS LATAM</span>
+        </div>
+        <div class="hero-title" style="color:#fff; font-size:clamp(40px, 6.5vw, 110px);">
+          <span lang="en">SKO PRODUCT</span>
+          <span lang="es">PRODUCTO SKO</span>
+          <span lang="pt">PRODUTO SKO</span>
+        </div>
+        <div class="hero-title" style="font-size:clamp(42px, 7vw, 120px);">
+          <span lang="en" class="text-gradient">INTELLIGENCE</span>
+          <span lang="es" class="text-gradient">INTELIGENCIA</span>
+          <span lang="pt" class="text-gradient">INTELIGÊNCIA</span>
+        </div>
+        <div class="slide-desc-text" style="font-size:clamp(14px, 1.4vw, 24px);font-family:'Inter',sans-serif;font-weight:500;color:#8B93A6;margin-top:clamp(12px, 2vh, 24px)">
+          <span lang="en">What we learned at SKO — and what it means for you</span>
+          <span lang="es">Lo que aprendimos en SKO — y lo que significa para ti</span>
+          <span lang="pt">O que aprendemos no SKO — e o que significa para você</span>
+        </div>
+        
+        <div class="tag-row" style="margin-top:clamp(24px, 4vh, 48px)">
+          <span class="pill pill-purple">~60 MIN</span>
+          <span class="pill pill-orange">
+            <span lang="en">LATAM PARTNERS</span>
+            <span lang="es">SOCIOS LATAM</span>
+            <span lang="pt">PARCEIROS LATAM</span>
+          </span>
+          <span class="pill" style="border:1px solid #596073;color:#8B93A6;background:transparent;">
+            <span lang="en">8 SECTIONS</span>
+            <span lang="es">8 SECCIONES</span>
+            <span lang="pt">8 SEÇÕES</span>
+          </span>
+        </div>
+        
+        <!-- Aligned Bottom Elements -->
+        <div class="slide-logo-wrapper">
+          <svg class="cu-logo-cover" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 10L6 33L15 41L32 25L49 41L58 33L32 10Z" fill="url(#cu-grad-2)"/>
+            <defs>
+              <linearGradient id="cu-grad-2" x1="6" y1="10" x2="58" y2="41" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FF00DF"/>
+                <stop offset="0.5" stop-color="#7B68EE"/>
+                <stop offset="1" stop-color="#00C2FF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="cu-logo-cover-text">ClickUp</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 1 -->
+      <div class="slide slide-dark-bg" id="s1">
+        <div class="eyebrow">
+          <span lang="en">TODAY'S AGENDA</span>
+          <span lang="es">AGENDA DE HOY</span>
+          <span lang="pt">AGENDA DE HOJE</span>
+        </div>
+        <div class="content-title" style="color:#fff">
+          <span lang="en">What we're covering <span class="text-gradient">today</span></span>
+          <span lang="es">Lo que cubriremos <span class="text-gradient">hoy</span></span>
+          <span lang="pt">O que vamos cobrir <span class="text-gradient">hoje</span></span>
+        </div>
+        <div class="agenda-grid">
+          <div class="agenda-item" onclick="goTo(2)"><span class="agenda-n">01</span><span class="agenda-t">
+            <span lang="en">Opening — set the stakes</span><span lang="es">Apertura — definir el contexto</span><span lang="pt">Abertura — definir o contexto</span>
+          </span><span class="agenda-d">5 min</span></div>
+          <div class="agenda-item" onclick="goTo(4)"><span class="agenda-n">02</span><span class="agenda-t">
+            <span lang="en">Strategic shift — AI first</span><span lang="es">Cambio estratégico — IA primero</span><span lang="pt">Mudança estratégica — IA primeiro</span>
+          </span><span class="agenda-d">10 min</span></div>
+          <div class="agenda-item" onclick="goTo(6)"><span class="agenda-n">03</span><span class="agenda-t">
+            <span lang="en">MCP + browser agents</span><span lang="es">MCP + agentes de navegador</span><span lang="pt">MCP + agentes de navegador</span>
+          </span><span class="agenda-d">12 min</span></div>
+          <div class="agenda-item" onclick="goTo(8)"><span class="agenda-n">04</span><span class="agenda-t">
+            <span lang="en">VibeUp — CodeGen</span><span lang="es">VibeUp — CodeGen</span><span lang="pt">VibeUp — CodeGen</span>
+          </span><span class="agenda-d">12 min</span></div>
+          <div class="agenda-item" onclick="goTo(10)"><span class="agenda-n">05</span><span class="agenda-t">
+            <span lang="en">@clickup.com email</span><span lang="es">@clickup.com email</span><span lang="pt">@clickup.com email</span>
+          </span><span class="agenda-d">8 min</span></div>
+          <div class="agenda-item" onclick="goTo(12)"><span class="agenda-n">06</span><span class="agenda-t">
+            <span lang="en">How you sell</span><span lang="es">Cómo vender</span><span lang="pt">Como vender</span>
+          </span><span class="agenda-d">8 min</span></div>
+          <div class="agenda-item"><span class="agenda-n">07</span><span class="agenda-t">
+            <span lang="en">Open Q&A + close</span><span lang="es">Q&A abierto + cierre</span><span lang="pt">Q&A aberto + encerramento</span>
+          </span><span class="agenda-d">5 min</span></div>
+          <div class="agenda-item" onclick="goTo(14)"><span class="agenda-n">08</span><span class="agenda-t">
+            <span lang="en">ClickUp vs competition</span><span lang="es">ClickUp vs competencia</span><span lang="pt">ClickUp vs concorrência</span>
+          </span><span class="agenda-d">10 min</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 -->
+      <div class="slide slide-dark-bg" id="s2">
+        <div class="eyebrow">
+          <span lang="en">SECTION 01</span><span lang="es">SECCIÓN 01</span><span lang="pt">SEÇÃO 01</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en">This is not a</span><span lang="es">Esta no es una</span><span lang="pt">Esta não é uma</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en" class="text-gradient">routine update.</span>
+          <span lang="es" class="text-gradient">actualización de rutina.</span>
+          <span lang="pt" class="text-gradient">atualização de rotina.</span>
+        </div>
+        <div class="content-subtitle" style="margin-top:clamp(16px, 3vh, 32px)">
+          <span lang="en">5 min · Opening</span><span lang="es">5 min · Apertura</span><span lang="pt">5 min · Abertura</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 -->
+      <div class="slide slide-light-bg" id="s3">
+        <div class="eyebrow">
+          <span lang="en">OPENING</span><span lang="es">APERTURA</span><span lang="pt">ABERTURA</span>
+        </div>
+        <div class="content-title">
+          <span lang="en">Set the <span class="text-gradient">stakes</span></span>
+          <span lang="es">Establecer el <span class="text-gradient">contexto</span></span>
+          <span lang="pt">Definir o <span class="text-gradient">contexto</span></span>
+        </div>
+        <div class="dark-quote" style="margin-bottom:clamp(20px, 3vh, 40px)">
+          <span lang="en">"I just got back from SKO and I need to share what I saw — because it changes how we sell, demo, and position ClickUp."</span>
+          <span lang="es">"Acabo de regresar de SKO y necesito compartir lo que vi — porque cambia cómo vendemos, demostramos y posicionamos ClickUp."</span>
+          <span lang="pt">"Acabei de voltar do SKO e preciso compartilhar o que vi — porque muda como vendemos, demonstramos e posicionamos o ClickUp."</span>
+        </div>
+        <div class="action-row" style="border-color:#FF00DF"><span class="action-num" style="color:#FF00DF;">→</span><span class="action-text">
+          <span lang="en"><b>This is not a routine product update.</b> It is a turning point for the LATAM ecosystem.</span>
+          <span lang="es"><b>Esta no es una actualización de rutina.</b> Es un punto de inflexión para el ecosistema LATAM.</span>
+          <span lang="pt"><b>Esta não é uma atualização de rotina.</b> É um ponto de virada para o ecossistema LATAM.</span>
+        </span></div>
+        <div class="action-row" style="border-color:#FF00DF"><span class="action-num" style="color:#FF00DF;">→</span><span class="action-text">
+          <span lang="en"><b>Different markets, different verticals.</b> This intelligence applies to all of you.</span>
+          <span lang="es"><b>Diferentes mercados, diferentes verticales.</b> Esta inteligencia se aplica a todos ustedes.</span>
+          <span lang="pt"><b>Diferentes mercados, diferentes verticais.</b> Esta inteligência se aplica a todos vocês.</span>
+        </span></div>
+        <div class="action-row" style="border-color:#FF00DF"><span class="action-num" style="color:#FF00DF;">→</span><span class="action-text">
+          <span lang="en"><b>4 product drops + 1 strategic shift.</b> Hold questions to the end — it will all connect.</span>
+          <span lang="es"><b>4 lanzamientos + 1 cambio estratégico.</b> Guarden las preguntas para el final — todo se conectará.</span>
+          <span lang="pt"><b>4 lançamentos + 1 mudança estratégica.</b> Guardem as perguntas para o final — tudo vai se conectar.</span>
+        </span></div>
+      </div>
+
+      <!-- SLIDE 4 -->
+      <div class="slide slide-dark-bg" id="s4">
+        <div class="eyebrow">
+          <span lang="en">SECTION 02</span><span lang="es">SECCIÓN 02</span><span lang="pt">SEÇÃO 02</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en">ClickUp is no longer</span><span lang="es">ClickUp ya no es</span><span lang="pt">O ClickUp não é mais</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en" class="text-gradient">a PM tool.</span>
+          <span lang="es" class="text-gradient">una herramienta PM.</span>
+          <span lang="pt" class="text-gradient">uma ferramenta PM.</span>
+        </div>
+        <div style="margin-top:clamp(16px, 2.5vh, 32px)">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(20px, 2.5vw, 48px);font-weight:800;color:#8B93A6">
+            <span lang="en">It's an </span><span lang="es">Es una </span><span lang="pt">É uma </span>
+          </span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(20px, 2.5vw, 48px);font-weight:800;color:#FF7A00">
+            <span lang="en">AI platform.</span><span lang="es">plataforma de IA.</span><span lang="pt">plataforma de IA.</span>
+          </span>
+        </div>
+        <div class="content-subtitle" style="margin-top:clamp(20px, 3vh, 40px)">
+          <span lang="en">10 min · Strategic shift</span><span lang="es">10 min · Cambio estratégico</span><span lang="pt">10 min · Mudança estratégica</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 -->
+      <div class="slide slide-light-bg" id="s5">
+        <div class="eyebrow">
+          <span lang="en">THE STRATEGIC SHIFT</span><span lang="es">EL CAMBIO ESTRATÉGICO</span><span lang="pt">A MUDANÇA ESTRATÉGICA</span>
+        </div>
+        <div class="content-title">
+          <span lang="en">4 things you need <span class="text-gradient">to know</span></span>
+          <span lang="es">4 cosas que necesitas <span class="text-gradient">saber</span></span>
+          <span lang="pt">4 coisas que você precisa <span class="text-gradient">saber</span></span>
+        </div>
+        <div class="card-grid">
+          <div class="content-card">
+            <div class="card-title card-title-purple">
+              <span lang="en">AI platform, not PM tool</span><span lang="es">Plataforma IA, no herramienta de PM</span><span lang="pt">Plataforma IA, não ferramenta de PM</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">Every conversation starts here. ClickUp is an AI platform with PM built in.</span>
+              <span lang="es">Toda conversación comienza aquí. ClickUp es una plataforma de IA con PM integrado.</span>
+              <span lang="pt">Toda conversa começa aqui. O ClickUp é uma plataforma de IA com PM integrado.</span>
+            </div>
+          </div>
+          <div class="content-card">
+            <div class="card-title card-title-pink">
+              <span lang="en">IPO context</span><span lang="es">Contexto de IPO</span><span lang="pt">Contexto de IPO</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">AI revenue must grow for investors. AI stays on every deal — always.</span>
+              <span lang="es">Los ingresos de IA deben crecer para los inversores. La IA se mantiene en cada trato — siempre.</span>
+              <span lang="pt">A receita de IA deve crescer para os investidores. A IA fica em todo negócio — sempre.</span>
+            </div>
+          </div>
+          <div class="content-card">
+            <div class="card-title card-title-orange">
+              <span lang="en">New ICP signal</span><span lang="es">Nueva señal ICP</span><span lang="pt">Novo sinal ICP</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">A client who rejects AI today is not our ideal customer. That's the filter.</span>
+              <span lang="es">Un cliente que rechaza la IA hoy no es nuestro cliente ideal. Ese es el filtro.</span>
+              <span lang="pt">Um cliente que rejeita a IA hoje não é nosso cliente ideal. Esse é o filtro.</span>
+            </div>
+          </div>
+          <div class="content-card">
+            <div class="card-title card-title-purple">
+              <span lang="en">Deal structure</span><span lang="es">Estructura del trato</span><span lang="pt">Estrutura do negócio</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">Discount base plan before ever removing the AI add-on. Business + AI wins.</span>
+              <span lang="es">Descuente el plan base antes de quitar el complemento de IA. Business + IA gana.</span>
+              <span lang="pt">Dê desconto no plano base antes de remover o add-on de IA. Business + IA vence.</span>
+            </div>
+          </div>
+        </div>
+        <div class="dark-quote">
+          <span lang="en">"Lead with AI. If the client isn't excited — that's your qualification filter, not the close."</span>
+          <span lang="es">"Lidere con IA. Si el cliente no está emocionado — ese es su filtro de calificación, no el cierre."</span>
+          <span lang="pt">"Lidere com IA. Se o cliente não estiver animado — esse é o seu filtro de qualificação, não o fechamento."</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 -->
+      <div class="slide slide-dark-bg" id="s6">
+        <div class="eyebrow eyebrow-orange">
+          <span lang="en">PRODUCT DROP 01</span><span lang="es">LANZAMIENTO 01</span><span lang="pt">LANÇAMENTO 01</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en">MCP integrations</span><span lang="es">Integraciones MCP</span><span lang="pt">Integrações MCP</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en" class="text-gradient">+ browser agents</span>
+          <span lang="es" class="text-gradient">+ agentes web</span>
+          <span lang="pt" class="text-gradient">+ agentes web</span>
+        </div>
+        <div class="content-subtitle" style="margin-top:clamp(16px, 3vh, 32px)">
+          <span lang="en">12 min · The end of costly integrations</span><span lang="es">12 min · El fin de las integraciones costosas</span><span lang="pt">12 min · O fim das integrações caras</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 7 -->
+      <div class="slide slide-light-bg" id="s7">
+        <div class="eyebrow eyebrow-orange">
+          <span lang="en">MCP + BROWSER AGENTS</span><span lang="es">MCP + AGENTES WEB</span><span lang="pt">MCP + AGENTES WEB</span>
+        </div>
+        <div class="content-title">
+          <span lang="en">APIs are becoming <span style="color:#FF7A00">legacy</span></span>
+          <span lang="es">Las APIs se están volviendo <span style="color:#FF7A00">obsoletas</span></span>
+          <span lang="pt">As APIs estão se tornando <span style="color:#FF7A00">obsoletas</span></span>
+        </div>
+        <div class="card-grid">
+          <div class="content-card" style="border-left:4px solid #FF7A00; border-top:none;">
+            <div class="card-title card-title-orange">
+              <span lang="en">MCP integrations</span><span lang="es">Integraciones MCP</span><span lang="pt">Integrações MCP</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">Brain connects to any MCP platform <b style="color:#1A1B20">bidirectionally</b>. SAP, Salesforce, any tool — no API, no middleware.</span>
+              <span lang="es">Brain se conecta a cualquier plataforma MCP <b style="color:#1A1B20">bidireccionalmente</b>. SAP, Salesforce, cualquier herramienta — sin API, sin middleware.</span>
+              <span lang="pt">O Brain se conecta a qualquer plataforma MCP <b style="color:#1A1B20">bidirecionalmente</b>. SAP, Salesforce, qualquer ferramenta — sem API, sem middleware.</span>
+            </div>
+            <div style="font-size:clamp(12px, 1.1vw, 18px);font-style:italic;color:#FF7A00;font-family:'Inter',sans-serif;margin-top:clamp(12px, 2vh, 24px);font-weight:600;">
+              <span lang="en">"APIs = legacy infra in 12–18 months."</span>
+              <span lang="es">"APIs = infraestructura heredada en 12–18 meses."</span>
+              <span lang="pt">"APIs = infraestrutura legada em 12–18 meses."</span>
+            </div>
+          </div>
+          <div class="content-card" style="border-left:4px solid #7B68EE; border-top:none;">
+            <div class="card-title card-title-purple">
+              <span lang="en">Browser agents</span><span lang="es">Agentes web</span><span lang="pt">Agentes web</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">No MCP? Agents click, fill forms, submit data on any website. <b style="color:#1A1B20">Zero integration required.</b></span>
+              <span lang="es">¿Sin MCP? Los agentes hacen clic, llenan formularios y envían datos en cualquier sitio web. <b style="color:#1A1B20">Cero integración requerida.</b></span>
+              <span lang="pt">Sem MCP? Os agentes clicam, preenchem formulários e enviam dados em qualquer site web. <b style="color:#1A1B20">Zero integração necessária.</b></span>
+            </div>
+            <div style="font-size:clamp(12px, 1.1vw, 18px);font-style:italic;color:#7B68EE;font-family:'Inter',sans-serif;margin-top:clamp(12px, 2vh, 24px);font-weight:600;">
+              <span lang="en">"Go to supplier portal, create 3 tasks. No code. Done."</span>
+              <span lang="es">"Ir al portal, crear 3 tareas. Sin código. Listo."</span>
+              <span lang="pt">"Vá para o portal, crie 3 tarefas. Sem código. Feito."</span>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:clamp(14px, 1.3vw, 22px);font-weight:600;font-family:'Inter',sans-serif;color:#1A1B20;margin-top:clamp(20px, 3vh, 40px)">
+          <span lang="en">→ When clients ask "does ClickUp integrate with X?" — answer is now: <span style="color:#FF7A00">"yes, or an agent handles it."</span></span>
+          <span lang="es">→ Cuando pregunten "¿ClickUp se integra con X?" — la respuesta ahora es: <span style="color:#FF7A00">"sí, o un agente lo maneja."</span></span>
+          <span lang="pt">→ Quando perguntarem "o ClickUp se integra com X?" — a resposta agora é: <span style="color:#FF7A00">"sim, ou um agente resolve."</span></span>
+        </div>
+      </div>
+
+      <!-- SLIDE 8 -->
+      <div class="slide slide-dark-bg" id="s8">
+        <div class="eyebrow">
+          <span lang="en">PRODUCT DROP 02</span><span lang="es">LANZAMIENTO 02</span><span lang="pt">LANÇAMENTO 02</span>
+        </div>
+        <div class="hero-title">VibeUp</div>
+        <div class="hero-title">
+          <span lang="en" class="text-gradient">CodeGen acquisition</span>
+          <span lang="es" class="text-gradient">Adquisición CodeGen</span>
+          <span lang="pt" class="text-gradient">Aquisição CodeGen</span>
+        </div>
+        <div class="content-subtitle" style="margin-top:clamp(16px, 3vh, 32px)">
+          <span lang="en">12 min · The biggest wow moment</span><span lang="es">12 min · El mayor momento de asombro</span><span lang="pt">12 min · O maior momento de impacto</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 9 -->
+      <div class="slide slide-light-bg" id="s9">
+        <div class="eyebrow">VIBEUP — CODEGEN</div>
+        <div class="content-title">
+          <span lang="en">Your ClickUp, <span class="text-gradient">your way</span></span>
+          <span lang="es">Tu ClickUp, <span class="text-gradient">a tu manera</span></span>
+          <span lang="pt">Seu ClickUp, <span class="text-gradient">do seu jeito</span></span>
+        </div>
+        <div class="dark-quote" style="margin-bottom:clamp(20px, 3.5vh, 40px); color:#fff; font-style:normal;">
+          <span style="color:#8B93A6">
+            <span lang="en">Before: </span><span lang="es">Antes: </span><span lang="pt">Antes: </span>
+          </span>
+          <span lang="en">you adapt to ClickUp's interface. </span>
+          <span lang="es">te adaptas a la interfaz de ClickUp. </span>
+          <span lang="pt">você se adapta à interface do ClickUp. </span>
+          &nbsp;
+          <span style="color:#FF00DF;font-weight:800; font-family:'Plus Jakarta Sans',sans-serif;">
+            <span lang="en">After: </span><span lang="es">Después: </span><span lang="pt">Depois: </span>
+          </span>
+          <b>
+            <span lang="en">ClickUp adapts to your process.</span>
+            <span lang="es">ClickUp se adapta a tu proceso.</span>
+            <span lang="pt">O ClickUp se adapta ao seu processo.</span>
+          </b>
+        </div>
+        <div class="action-row" style="border-color:#7B68EE"><span class="action-num">01</span><span class="action-text">
+          <b><span lang="en">What it is</span><span lang="es">Qué es</span><span lang="pt">O que é</span></b> 
+          <span lang="en">Full UX customization on ClickUp's data model. Views, dashboards, buttons in natural language.</span>
+          <span lang="es">Personalización total de UX sobre el modelo de datos de ClickUp. Vistas, paneles, botones en lenguaje natural.</span>
+          <span lang="pt">Personalização total de UX no modelo de dados do ClickUp. Visualizações, painéis, botões em linguagem natural.</span>
+        </span></div>
+        <div class="action-row" style="border-color:#FF00DF"><span class="action-num" style="color:#FF00DF">02</span><span class="action-text">
+          <b><span lang="en">Why competitors can't</span><span lang="es">Por qué la competencia no puede</span><span lang="pt">Por que a concorrência não pode</span></b> 
+          <span lang="en">Monday, Asana, Microsoft all have fragmented codebases. Rebuilding from scratch is the only option.</span>
+          <span lang="es">Monday, Asana y Microsoft tienen bases de código fragmentadas. Reconstruir desde cero es la única opción.</span>
+          <span lang="pt">Monday, Asana e Microsoft têm bases de código fragmentadas. Reconstruir do zero é a única opção.</span>
+        </span></div>
+        <div class="action-row" style="border-color:#FF7A00"><span class="action-num" style="color:#FF7A00">03</span><span class="action-text">
+          <b><span lang="en">For partners</span><span lang="es">Para los socios</span><span lang="pt">Para parceiros</span></b> 
+          <span lang="en">Your process mapping becomes the input for VibeUp. You're co-designing the client's OS.</span>
+          <span lang="es">Su mapeo de procesos se convierte en la entrada para VibeUp. Están codiseñando el SO del cliente.</span>
+          <span lang="pt">Seu mapeamento de processos se torna a entrada para o VibeUp. Vocês estão codesenhando o SO do cliente.</span>
+        </span></div>
+      </div>
+
+      <!-- SLIDE 10 -->
+      <div class="slide slide-dark-bg" id="s10">
+        <div class="eyebrow eyebrow-orange">
+          <span lang="en">PRODUCT DROP 03</span><span lang="es">LANZAMIENTO 03</span><span lang="pt">LANÇAMENTO 03</span>
+        </div>
+        <div class="hero-title">
+          <span class="text-gradient">@clickup.com</span>
+        </div>
+        <div class="hero-title" style="color:#fff">
+          <span lang="en">The collaborative inbox</span><span lang="es">La bandeja colaborativa</span><span lang="pt">A caixa colaborativa</span>
+        </div>
+        <div class="content-subtitle" style="margin-top:clamp(16px, 3vh, 32px)">
+          <span lang="en">8 min · ClickUp vs Google &amp; Microsoft</span>
+          <span lang="es">8 min · ClickUp vs Google y Microsoft</span>
+          <span lang="pt">8 min · ClickUp vs Google e Microsoft</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 11 -->
+      <div class="slide slide-light-bg" id="s11">
+        <div class="eyebrow eyebrow-orange">@CLICKUP.COM EMAIL</div>
+        <div class="content-title">
+          <span lang="en">Going after <span class="text-gradient">Google &amp; Microsoft</span></span>
+          <span lang="es">Yendo tras <span class="text-gradient">Google &amp; Microsoft</span></span>
+          <span lang="pt">Indo atrás de <span class="text-gradient">Google &amp; Microsoft</span></span>
+        </div>
+        <div style="display:inline-block;background:#FF7A00;padding:6px 16px;border-radius:99px;font-size:clamp(10px, 0.9vw, 14px);font-weight:800;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:clamp(12px, 2.5vh, 24px); letter-spacing: 0.05em;">
+          <span lang="en">1–3 YEARS OUT</span><span lang="es">A 1–3 AÑOS</span><span lang="pt">DAQUI A 1–3 ANOS</span>
+        </div>
+        <div class="card-grid-3">
+          <div class="content-card">
+            <div class="card-title card-title-orange">
+              <span lang="en">The vision</span><span lang="es">La visión</span><span lang="pt">A visão</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">@clickup.com email — collaborative inbox, co-author messages, internal comments before sending. Similar to Front.</span>
+              <span lang="es">Email @clickup.com — bandeja colaborativa, coautoría de mensajes, comentarios internos antes de enviar. Similar a Front.</span>
+              <span lang="pt">E-mail @clickup.com — caixa colaborativa, coautoria de mensagens, comentários internos antes de enviar. Semelhante ao Front.</span>
+            </div>
+          </div>
+          <div class="content-card">
+            <div class="card-title card-title-purple">
+              <span lang="en">Competitive frame</span><span lang="es">Marco competitivo</span><span lang="pt">Quadro competitivo</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">Target: Google Workspace &amp; Microsoft 365. Monday is irrelevant. ClickUp goes after the full work OS.</span>
+              <span lang="es">Objetivo: Google Workspace y Microsoft 365. Monday es irrelevante. ClickUp va por el SO de trabajo completo.</span>
+              <span lang="pt">Alvo: Google Workspace e Microsoft 365. Monday é irrelevante. O ClickUp vai atrás do SO de trabalho completo.</span>
+            </div>
+          </div>
+          <div class="content-card">
+            <div class="card-title card-title-pink">
+              <span lang="en">Use this now</span><span lang="es">Úsalo ahora</span><span lang="pt">Use isso agora</span>
+            </div>
+            <div class="card-body">
+              <span lang="en">Directional signal only. Shifts how prospects think about ClickUp's ceiling and competitive league.</span>
+              <span lang="es">Solo señal direccional. Cambia cómo los prospectos ven el techo de ClickUp y su liga competitiva.</span>
+              <span lang="pt">Apenas sinal direcional. Muda como os prospects veem o teto do ClickUp e sua liga competitiva.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 12 -->
+      <div class="slide slide-dark-bg" id="s12">
+        <div class="eyebrow">
+          <span lang="en">SECTION 06</span><span lang="es">SECCIÓN 06</span><span lang="pt">SEÇÃO 06</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en">What this means for</span><span lang="es">Qué significa esto para</span><span lang="pt">O que isso significa para</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en" class="text-gradient-purple">how you sell</span>
+          <span lang="es" class="text-gradient-purple">cómo vendes</span>
+          <span lang="pt" class="text-gradient-purple">como você vende</span>
+        </div>
+        <div class="content-subtitle" style="margin-top:clamp(16px, 3vh, 32px)">
+          <span lang="en">8 min · Making it actionable</span><span lang="es">8 min · Haciéndolo procesable</span><span lang="pt">8 min · Tornando acionável</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 13 -->
+      <div class="slide slide-light-bg" id="s13">
+        <div class="eyebrow">
+          <span lang="en">ACTIONABLE CHANGES</span><span lang="es">CAMBIOS ACCIONABLES</span><span lang="pt">MUDANÇAS ACIONÁVEIS</span>
+        </div>
+        <div class="content-title">
+          <span lang="en">4 behavior changes <span class="text-gradient">starting now</span></span>
+          <span lang="es">4 cambios de comportamiento <span class="text-gradient">empezando ahora</span></span>
+          <span lang="pt">4 mudanças de comportamento <span class="text-gradient">começando agora</span></span>
+        </div>
+        <div style="margin-top:clamp(16px, 3vh, 32px)">
+          <div class="action-row"><span class="action-num">01</span><div>
+            <div style="font-size:clamp(14px, 1.3vw, 22px);font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;color:#1A1B20;margin-bottom:clamp(4px, 1vh, 8px); letter-spacing:-0.01em;">
+              <span lang="en">Lead every demo with agents.</span><span lang="es">Lidera cada demo con agentes.</span><span lang="pt">Lidere cada demo com agentes.</span>
+            </div>
+            <div style="font-size:clamp(12px, 1.1vw, 18px);font-family:'Inter',sans-serif;color:#596073;line-height:1.5;">
+              <span lang="en">Before lists, docs, dashboards — show an agent doing something. That's what sticks.</span>
+              <span lang="es">Antes de listas, documentos, paneles — muestra a un agente haciendo algo. Eso es lo que se queda.</span>
+              <span lang="pt">Antes de listas, docs, painéis — mostre um agente fazendo algo. Isso é o que marca.</span>
+            </div>
+          </div></div>
+          <div class="action-row" style="border-color:#FF00DF"><span class="action-num" style="color:#FF00DF">02</span><div>
+            <div style="font-size:clamp(14px, 1.3vw, 22px);font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;color:#1A1B20;margin-bottom:clamp(4px, 1vh, 8px); letter-spacing:-0.01em;">
+              <span lang="en">Requalify your pipeline.</span><span lang="es">Reclasifica tu pipeline.</span><span lang="pt">Requalifique seu pipeline.</span>
+            </div>
+            <div style="font-size:clamp(12px, 1.1vw, 18px);font-family:'Inter',sans-serif;color:#596073;line-height:1.5;">
+              <span lang="en">Which deals are AI-forward? Those are your priority. Deprioritize PM-only buyers.</span>
+              <span lang="es">¿Qué tratos están orientados a IA? Son tu prioridad. Resta prioridad a compradores solo de PM.</span>
+              <span lang="pt">Quais negócios são focados em IA? Esses são sua prioridade. Despriorize compradores apenas de PM.</span>
+            </div>
+          </div></div>
+          <div class="action-row" style="border-color:#FF7A00"><span class="action-num" style="color:#FF7A00">03</span><div>
+            <div style="font-size:clamp(14px, 1.3vw, 22px);font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;color:#1A1B20;margin-bottom:clamp(4px, 1vh, 8px); letter-spacing:-0.01em;">
+              <span lang="en">Keep AI on every contract.</span><span lang="es">Mantén la IA en cada contrato.</span><span lang="pt">Mantenha a IA em todos os contratos.</span>
+            </div>
+            <div style="font-size:clamp(12px, 1.1vw, 18px);font-family:'Inter',sans-serif;color:#596073;line-height:1.5;">
+              <span lang="en">Business + AI beats Business Plus without AI. Protect the add-on first, discount base plan.</span>
+              <span lang="es">Business + IA supera a Business Plus sin IA. Protege el complemento primero, descuenta el plan base.</span>
+              <span lang="pt">Business + IA supera Business Plus sem IA. Proteja o add-on primeiro, dê desconto no plano base.</span>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 14 -->
+      <div class="slide slide-dark-bg" id="s14">
+        <div class="eyebrow">
+          <span lang="en">SECTION 08</span><span lang="es">SECCIÓN 08</span><span lang="pt">SEÇÃO 08</span>
+        </div>
+        <div class="hero-title">ClickUp vs</div>
+        <div class="hero-title">
+          <span lang="en" class="text-gradient">the competition</span>
+          <span lang="es" class="text-gradient">la competencia</span>
+          <span lang="pt" class="text-gradient">a concorrência</span>
+        </div>
+        <div style="font-size:clamp(20px, 2.5vw, 48px);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;margin-top:clamp(16px, 2.5vh, 32px); letter-spacing:-0.02em;">
+          <span style="color:#8B93A6">
+            <span lang="en">Becoming the </span><span lang="es">Convirtiéndose en el </span><span lang="pt">Tornando-se o </span>
+          </span>
+          <span style="color:#FF7A00">
+            <span lang="en">AI leader</span><span lang="es">líder de IA</span><span lang="pt">líder de IA</span>
+          </span>
+        </div>
+        <div class="content-subtitle" style="margin-top:clamp(20px, 3vh, 40px)">
+          <span lang="en">10 min · The category-level story</span>
+          <span lang="es">10 min · La historia a nivel de categoría</span>
+          <span lang="pt">10 min · A história a nível de categoria</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 15 -->
+      <div class="slide slide-light-bg" id="s15">
+        <div class="eyebrow">
+          <span lang="en">THE NEW CATEGORY</span><span lang="es">LA NUEVA CATEGORÍA</span><span lang="pt">A NOVA CATEGORIA</span>
+        </div>
+        <div class="content-title">
+          <span lang="en">The old game <span class="text-gradient-purple">is over</span></span>
+          <span lang="es">El juego antiguo <span class="text-gradient-purple">ha terminado</span></span>
+          <span lang="pt">O jogo antigo <span class="text-gradient-purple">acabou</span></span>
+        </div>
+        <div class="dark-quote" style="color:#D1D5DB; font-style:normal;">
+          <span style="color:#FF00DF;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif">AI Work OS</span> 
+          <span lang="en">— Not a PM tool. Not a collaboration suite. An operating system for how companies work, built on a unified codebase from day one.</span>
+          <span lang="es">— No una herramienta PM. No una suite de colaboración. Un sistema operativo para cómo trabajan las empresas, construido sobre una base de código unificada desde el primer día.</span>
+          <span lang="pt">— Não é uma ferramenta de PM. Não é uma suíte de colaboração. Um sistema operacional para como as empresas trabalham, construído em uma base de código unificada desde o primeiro dia.</span>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <span lang="en">Unified data model</span><span lang="es">Modelo de datos unificado</span><span lang="pt">Modelo de dados unificado</span>
+          </div>
+          <div class="pillar pillar-pink">
+            <span lang="en">Native agent layer</span><span lang="es">Capa de agente nativa</span><span lang="pt">Camada de agente nativa</span>
+          </div>
+          <div class="pillar pillar-orange">
+            <span lang="en">Custom UX (VibeUp)</span><span lang="es">UX personalizada (VibeUp)</span><span lang="pt">UX personalizada (VibeUp)</span>
+          </div>
+          <div class="pillar">Open MCP</div>
+        </div>
+        <div style="margin-top:clamp(20px, 3.5vh, 40px)">
+          <div class="comp-row"><span class="comp-name">Monday / Asana</span><span class="verdict" style="background:#fee;color:#c00">
+            <span lang="en">Wrong race</span><span lang="es">Carrera equivocada</span><span lang="pt">Corrida errada</span>
+          </span><span class="comp-desc" style="padding-left:10px">
+            <span lang="en">No unified codebase, no agent layer, no path to VibeUp.</span>
+            <span lang="es">Sin base de código unificada, sin capa de agentes, sin camino a VibeUp.</span>
+            <span lang="pt">Sem base de código unificada, sem camada de agentes, sem caminho para o VibeUp.</span>
+          </span></div>
+          <div class="comp-row"><span class="comp-name">Microsoft 365</span><span class="verdict" style="background:#fff0e6;color:#c60">
+            <span lang="en">Structurally blocked</span><span lang="es">Estructuralmente bloqueado</span><span lang="pt">Estruturalmente bloqueado</span>
+          </span><span class="comp-desc" style="padding-left:10px">
+            <span lang="en">Rebuilding Excel, Outlook, Teams is the only fix. Not happening.</span>
+            <span lang="es">Reconstruir Excel, Outlook, Teams es la única solución. No sucederá.</span>
+            <span lang="pt">Reconstruir Excel, Outlook, Teams é a única solução. Não vai acontecer.</span>
+          </span></div>
+          <div class="comp-row"><span class="comp-name">Salesforce / SAP</span><span class="verdict" style="background:#EEF2FF;color:#7B68EE">
+            <span lang="en">MCP targets</span><span lang="es">Objetivos MCP</span><span lang="pt">Alvos MCP</span>
+          </span><span class="comp-desc" style="padding-left:10px">
+            <span lang="en">Not competitors — soon to be MCP integration partners.</span>
+            <span lang="es">No son competidores — pronto serán socios de integración MCP.</span>
+            <span lang="pt">Não são concorrentes — em breve serão parceiros de integração MCP.</span>
+          </span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 16 -->
+      <div class="slide slide-dark-bg" id="s16">
+        <div class="eyebrow">
+          <span lang="en">CLOSING</span><span lang="es">CIERRE</span><span lang="pt">ENCERRAMENTO</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en">You are not</span><span lang="es">No estás</span><span lang="pt">Você não está</span>
+        </div>
+        <div class="hero-title">
+          <span lang="en" class="text-gradient">selling software.</span>
+          <span lang="es" class="text-gradient">vendiendo software.</span>
+          <span lang="pt" class="text-gradient">vendendo software.</span>
+        </div>
+        <div class="closing-line" style="font-size:clamp(20px, 2.2vw, 40px); font-family:'Plus Jakarta Sans',sans-serif; letter-spacing:-0.01em;">
+          <span lang="en">You are selling the <span class="text-gradient-purple">operating system</span> for the next generation of work.</span>
+          <span lang="es">Estás vendiendo el <span class="text-gradient-purple">sistema operativo</span> para la próxima generación del trabajo.</span>
+          <span lang="pt">Você está vendendo o <span class="text-gradient-purple">sistema operacional</span> para a próxima geração do trabalho.</span>
+        </div>
+        <div class="dark-quote" style="display:flex; gap:clamp(16px, 2.5vw, 32px); flex-wrap:wrap; font-style:normal; border-left:none; background:transparent; padding:0; margin-top:clamp(32px, 5vh, 64px);">
+          <span style="color:#FF00DF;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(16px, 1.5vw, 24px);">
+            <span lang="en">Lead with AI</span><span lang="es">Lidera con IA</span><span lang="pt">Lidere com IA</span>
+          </span>
+          <span style="color:#3A3D4A;font-size:clamp(16px, 1.5vw, 24px);">/</span>
+          <span style="color:#E5E7EB;font-weight:600; font-size:clamp(16px, 1.5vw, 24px);">
+            <span lang="en">Keep AI on every contract</span><span lang="es">Mantén la IA en cada contrato</span><span lang="pt">Mantenha a IA em todos os contratos</span>
+          </span>
+          <span style="color:#3A3D4A;font-size:clamp(16px, 1.5vw, 24px);">/</span>
+          <span style="color:#E5E7EB;font-weight:600; font-size:clamp(16px, 1.5vw, 24px);">
+            <span lang="en">Requalify your pipeline</span><span lang="es">Reclasifica tu pipeline</span><span lang="pt">Requalifique seu pipeline</span>
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="prev()">
+        <span lang="en">← Prev</span><span lang="es">← Ant</span><span lang="pt">← Ant</span>
+      </button>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="dots" id="dots"></div>
+        <span class="slide-counter" id="counter">1 / 17</span>
+      </div>
+      <button class="nav-btn nav-btn-primary" onclick="next()">
+        <span lang="en">Next →</span><span lang="es">Sig →</span><span lang="pt">Próx →</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let cur = 0;
+const total = 17;
+
+// Lógica de cambio de idioma
+function setLang(lang) {
+  // Cambia la clase del body para mostrar/ocultar el contenido con atributos lang
+  document.body.className = 'lang-' + lang;
+  
+  // Actualiza el estado visual de los botones del toggle
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('btn-' + lang).classList.add('active');
+}
+
+// Inicialización de la navegación
+function buildDots() {
+  const d = document.getElementById('dots');
+  d.innerHTML = '';
+  for(let i=0;i<total;i++){
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot-sm' + (i===cur?' on':'');
+    dot.onclick = ()=>goTo(i);
+    d.appendChild(dot);
+  }
+}
+
+function goTo(n) {
+  document.getElementById('s'+cur).classList.remove('visible');
+  document.querySelectorAll('#sidebar .nav-item').forEach(el=>{
+    el.classList.remove('active');
+    if(parseInt(el.dataset.slide)===n) el.classList.add('active');
+  });
+  cur = n;
+  const s = document.getElementById('s'+cur);
+  s.classList.add('visible');
+  document.getElementById('counter').textContent = (cur+1)+' / '+total;
+  document.getElementById('prog').style.width = Math.round(((cur+1)/total)*100)+'%';
+  document.getElementById('prog-text').textContent = (cur+1)+'/'+total;
+  buildDots();
+}
+
+function next(){ if(cur<total-1) goTo(cur+1); }
+function prev(){ if(cur>0) goTo(cur-1); }
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') next();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') prev();
+});
+
+// Arrancar en diapositiva 0
+buildDots();
+</script>
+</body>
+</html>
